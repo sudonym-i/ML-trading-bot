@@ -1,0 +1,33 @@
+import torch
+from torch.utils.data import DataLoader as TorchDataLoader, TensorDataset
+from model import GRUPredictor
+from data_handler import DataLoader
+from utils import create_sequences, add_technical_indicators
+import numpy as np
+
+
+def train_gru_predictor(model, dataset, epochs=10, batch_size=32, lr=1e-3):
+	print(f"[INFO] Starting training for {epochs} epochs, batch size {batch_size}, learning rate {lr}")
+	loader = TorchDataLoader(dataset, batch_size=batch_size, shuffle=True)
+	criterion = torch.nn.MSELoss()
+	optimizer = torch.optim.Adam(model.parameters(), lr=lr)
+	model.train()
+	for epoch in range(epochs):
+		total_loss = 0
+		batch_count = 0
+		for X_batch, y_batch in loader:
+			optimizer.zero_grad()
+			output = model(X_batch)
+			loss = criterion(output, y_batch)
+			# Print relevant data for each batch
+			print(f"Prediction (first sample): {output[0].detach().numpy()}")
+			print(f"Actual y_batch (first sample): {y_batch[0].detach().numpy()}")
+			print(f"Batch Loss: {loss.item():.6f}")
+			loss.backward()
+			optimizer.step()
+			total_loss += loss.item() * X_batch.size(0)
+			batch_count += 1
+		avg_loss = total_loss / len(dataset)
+		print(f"[INFO] Epoch {epoch+1}/{epochs}, Average Loss: {avg_loss:.4f}")
+	print("[INFO] Training complete.")
+

@@ -1,0 +1,10 @@
+{
+  "tickers": ["NVDA", "AAPL", "MSFT"],
+  "start": "2022-01-01",
+  "end": "2023-01-01",
+  "seq_length": 24,
+  "interval": "1d",
+  "epochs": 30,
+  "batch_size": 15,
+  "lr": 0.0001
+}
