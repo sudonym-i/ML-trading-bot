@@ -1,7 +1,7 @@
 
 # ML Trading Bot
 
-This project is an automated trading bot that uses deep learning to predict future stock prices and make trading decisions. The bot is designed for experimentation and educational purposes.
+This project is an automated trading bot that uses deep learning to predict future stock prices and make trading decisions.
 
 ## How it Works
 
