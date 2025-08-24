@@ -1,13 +1,13 @@
 import json
-from model import GRUPredictor
-from data_handler import make_dataset
-from train import train_gru_predictor
-from trade import simulate_trading
+from .model import GRUPredictor
+from .data_handler import make_dataset
+from .train import train_gru_predictor
+from .trade import simulate_trading
 
 
 def train_model():
 
-    with open("train_nn.json", "r") as fil:
+    with open("./nn/train_nn.json", "r") as fil:
         train_config = json.load(fil)
 
     train_tickers = train_config["tickers"]
@@ -34,7 +34,7 @@ def train_model():
 
 def test_model(model):
 
-    with open("test_nn.json", "r") as fil:
+    with open("./nn/test_nn.json", "r") as fil:
         test_config = json.load(fil)
 
     test_tickers = test_config["tickers"]

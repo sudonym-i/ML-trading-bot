@@ -11,14 +11,16 @@ This project is an automated trading bot that uses deep learning to predict futu
     - Data is split into sequences of configurable length for time series prediction.
 
 - **Machine Learning Model:**
-    - The core model is a multi-layer Gated Recurrent Unit (GRU) neural network implemented in PyTorch (`model.py`).
+    - The core model is a multi-layer Gated Recurrent Unit (GRU) neural network implemented in PyTorch (`nn/model.py`).
         - 3 GRU layers, 128 hidden units each
-        - Fully connected layers with ReLU activation and dropout for regularization
+        - Two fully connected layers (64 units, then 1 output)
+        - SiLU (Swish) activation function
+        - Dropout (0.2) after the first fully connected layer for regularization
         - Trained to predict the next closing price given a sequence of past prices and indicators
 
 - **Training:**
     - Model is trained using Mean Squared Error (MSE) loss and Adam optimizer.
-    - Training parameters (epochs, batch size, learning rate, etc.) are set in `config.json`.
+    - Training parameters (epochs, batch size, learning rate, etc.) are set in `train_nn.json`.
 
 - **Trading Logic:**
     - For each time step, the model predicts the next price.

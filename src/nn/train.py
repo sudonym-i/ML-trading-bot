@@ -1,8 +1,8 @@
 import torch
 from torch.utils.data import DataLoader as TorchDataLoader, TensorDataset
-from model import GRUPredictor
-from data_handler import DataLoader
-from utils import create_sequences, add_technical_indicators
+from .model import GRUPredictor
+from .data_handler import DataLoader
+from .utils import create_sequences, add_technical_indicators
 import numpy as np
 
 
