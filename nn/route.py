@@ -27,6 +27,10 @@ def train_model():
     model = GRUPredictor(input_dim=input_dim)
     train_gru_predictor(model, dataset, epochs=train_epochs, batch_size=train_batch_size, lr=train_lr)
 
+    return model
+
+
+
 
 def test_model(model):
 
@@ -48,3 +52,5 @@ def test_model(model):
 
     testDataset, input_dim = make_dataset(test_tickers, test_start, test_end, test_seq_length, test_interval, normalize=False)
     simulate_trading(model, testDataset, testDataset.tensors[1].numpy())
+
+    return
