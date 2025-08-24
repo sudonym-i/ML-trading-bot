@@ -19,10 +19,7 @@ def train_gru_predictor(model, dataset, epochs=10, batch_size=32, lr=1e-3):
 			optimizer.zero_grad()
 			output = model(X_batch)
 			loss = criterion(output, y_batch)
-			# Print relevant data for each batch
-			print(f"Prediction (first sample): {output[0].detach().numpy()}")
-			print(f"Actual y_batch (first sample): {y_batch[0].detach().numpy()}")
-			print(f"Batch Loss: {loss.item():.6f}")
+			
 			loss.backward()
 			optimizer.step()
 			total_loss += loss.item() * X_batch.size(0)

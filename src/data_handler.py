@@ -39,7 +39,7 @@ class DataLoader:
 
 
 
-def make_training_dataset(ticker, start, end, seq_length=24, interval="1d", normalize=False):  # e.g., 24 for 24 hours or days
+def make_dataset(ticker, start, end, seq_length=24, interval="1d", normalize=False):  # e.g., 24 for 24 hours or days
 	
     # Accepts a list of tickers, downloads and processes each, and combines all samples
 	if isinstance(ticker, str):

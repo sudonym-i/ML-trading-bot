@@ -32,7 +32,7 @@ class TradingSimulator:
             self.buy_price = price
             self.balance = 0
             action = 'buy'
-            print(f"[TRADE] Bought stock at ${price:.2f} per share, shares: {self.position:.4f}")
+            print(f"\n[TRADE] Bought stock at ${price:.2f} per share, shares: {self.position:.4f}\n")
             trade_info['buy_price'] = price
         
         # Sell if prediction is lower than current price and holding
@@ -42,7 +42,7 @@ class TradingSimulator:
             self.balance = sell_value
             self.position = 0
             action = 'sell'
-            print(f"[TRADE] Sold stock for ${price:.2f} per share, total: ${sell_value:.2f}, balance-change: ${profit:.2f}")
+            print(f"\n[TRADE] Sold stock for ${price:.2f} per share, total: ${sell_value:.2f}, balance-change: ${profit:.2f}\n")
             trade_info['sell_price'] = price
             trade_info['profit'] = profit
         
@@ -87,22 +87,30 @@ def simulate_trading(model, dataset, prices):
     portfolio_values = []
     seq_length = dataset.tensors[0].shape[1]  # sequence length from X shape
     prices = np.array(prices)
-    
+
+    # NOTE: Assumes input data and prices are in original (unnormalized) scale
     with torch.no_grad():
         for i, (X, _) in enumerate(dataset):
             X = X.unsqueeze(0)
-            z_pred = float(model(X).item())
-            # Use the 'Close' price from the last time step in the sequence (feature 0)
-            # For rolling mean/std, get the window of actual prices ending at this step
+            # Normalize input sequence (z-score) per window, matching training
+            # X shape: (1, seq_length, num_features)
+            X_np = X.cpu().numpy()
+            X_mean = X_np.mean(axis=1, keepdims=True)
+            X_std = X_np.std(axis=1, keepdims=True) + 1e-8
+            X_norm = (X_np - X_mean) / X_std
+            X_norm = torch.from_numpy(X_norm).type_as(X)
+            
+            # make prediction with the model based on the normalization of my data
+            pred_price = model.forward(X_norm)
+
+            # Denormalize the predicted price
+            pred_price = float(pred_price.squeeze()) * float(X_std.squeeze()[0]) + float(X_mean.squeeze()[0])
+
+            # Use the actual price for this time step
             price_idx = i + seq_length - 1
             if price_idx >= len(prices):
-                break  # avoid index error if prices is shorter than dataset
-            window_start = price_idx - seq_length + 1
-            window_end = price_idx + 1
-            price_window = prices[window_start:window_end]
-            rolling_mean = price_window.mean()
-            rolling_std = price_window.std() + 1e-8
-            pred_price = z_pred * rolling_std + rolling_mean
+                break
+
             price = prices[price_idx]
             sim.step(price, pred_price)
             portfolio_values.append(sim.get_portfolio_value(price))
