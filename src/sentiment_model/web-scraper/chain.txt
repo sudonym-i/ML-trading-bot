@@ -7,7 +7,7 @@ NOTE -  All urls and tags are statically allocated, therefore there is a size
 
 START-POINT | END-POINT | URL   <-- Enter comma-seperated
 {
-return false;">,</a>,https://catalog.mtroyal.ca/content.php?catoid=36&navoid=2946
+return false;">,</a>,https://www.google.com/search?q=nvidia+stock
 }
 ↑
 Curly brackets surround chain. Must be on their own line
