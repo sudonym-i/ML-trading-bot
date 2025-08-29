@@ -3,15 +3,19 @@ from torch.utils.data import DataLoader as TorchDataLoader, TensorDataset
 from .model import GRUPredictor
 from .data_handler import DataLoader
 from .utils import create_sequences, add_technical_indicators
+from .visualizations import plot_training_loss
 import numpy as np
 
 
-def train_gru_predictor(model, dataset, epochs=10, batch_size=32, lr=1e-3):
+def train_gru_predictor(model, dataset, epochs=10, batch_size=32, lr=1e-3, plot_loss=True):
 	print(f"[INFO] Starting training for {epochs} epochs, batch size {batch_size}, learning rate {lr}")
 	loader = TorchDataLoader(dataset, batch_size=batch_size, shuffle=True)
 	criterion = torch.nn.MSELoss()
 	optimizer = torch.optim.Adam(model.parameters(), lr=lr)
 	model.train()
+	
+	losses = []
+	
 	for epoch in range(epochs):
 		total_loss = 0
 		batch_count = 0
@@ -25,6 +29,13 @@ def train_gru_predictor(model, dataset, epochs=10, batch_size=32, lr=1e-3):
 			total_loss += loss.item() * X_batch.size(0)
 			batch_count += 1
 		avg_loss = total_loss / len(dataset)
+		losses.append(avg_loss)
 		print(f"[INFO] Epoch {epoch+1}/{epochs}, Average Loss: {avg_loss:.4f}")
+	
 	print("[INFO] Training complete.")
+	
+	if plot_loss and losses:
+		plot_training_loss(losses)
+	
+	return losses
 

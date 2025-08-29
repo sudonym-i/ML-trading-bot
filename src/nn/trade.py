@@ -1,5 +1,6 @@
 import numpy as np
 import torch
+from .visualizations import plot_portfolio_performance, plot_price_predictions, plot_performance_metrics
 
 class TradingSimulator:
     def __init__(self, initial_balance=1000):
@@ -75,16 +76,20 @@ class TradingSimulator:
 
 
 
-def simulate_trading(model, dataset, prices):
+def simulate_trading(model, dataset, prices, plot_results=True, initial_balance=1000):
     """
     Simulate trading using the trained model and price data.
     model: trained RNN model
     dataset: TensorDataset of (X, y)
     prices: array-like of actual prices (for portfolio value calculation)
+    plot_results: whether to plot visualization results
+    initial_balance: initial portfolio balance
     """
     model.eval()
-    sim = TradingSimulator()
+    sim = TradingSimulator(initial_balance=initial_balance)
     portfolio_values = []
+    predicted_prices = []
+    actual_prices = []
     seq_length = dataset.tensors[0].shape[1]  # sequence length from X shape
     prices = np.array(prices)
 
@@ -104,7 +109,7 @@ def simulate_trading(model, dataset, prices):
             pred_price = model.forward(X_norm)
 
             # Denormalize the predicted price
-            pred_price = float(pred_price.squeeze()) * float(X_std.squeeze()[0]) + float(X_mean.squeeze()[0])
+            pred_price_denorm = float(pred_price.squeeze()) * float(X_std.squeeze()[0]) + float(X_mean.squeeze()[0])
 
             # Use the actual price for this time step
             price_idx = i + seq_length - 1
@@ -112,8 +117,24 @@ def simulate_trading(model, dataset, prices):
                 break
 
             price = prices[price_idx]
-            sim.step(price, pred_price)
+            sim.step(price, pred_price_denorm)
             portfolio_values.append(sim.get_portfolio_value(price))
+            predicted_prices.append(pred_price_denorm)
+            actual_prices.append(price)
 
     print(f"[INFO] Final portfolio value: ${float(portfolio_values[-1]):.2f}")
-    return portfolio_values, sim.get_trades()
+    
+    trades = sim.get_trades()
+    
+    if plot_results:
+        # Plot portfolio performance
+        plot_portfolio_performance(portfolio_values, trades, initial_balance)
+        
+        # Plot price predictions
+        plot_price_predictions(actual_prices, predicted_prices)
+        
+        # Plot performance metrics if there are completed trades
+        if any(trade['profit'] != 0 for trade in trades):
+            plot_performance_metrics(trades, initial_balance)
+    
+    return portfolio_values, trades

@@ -5,6 +5,7 @@ import torch
 from torch.utils.data import DataLoader as TorchDataLoader, TensorDataset
 from .model import GRUPredictor
 from .utils import create_sequences, add_technical_indicators
+from .visualizations import plot_technical_indicators
 import numpy as np
 
 
@@ -39,7 +40,7 @@ class DataLoader:
 
 
 
-def make_dataset(ticker, start, end, seq_length=24, interval="1d", normalize=False):  # e.g., 24 for 24 hours or days
+def make_dataset(ticker, start, end, seq_length=24, interval="1d", normalize=False, plot_indicators=True):  # e.g., 24 for 24 hours or days
 	
     # Accepts a list of tickers, downloads and processes each, and combines all samples
 	if isinstance(ticker, str):
@@ -58,6 +59,11 @@ def make_dataset(ticker, start, end, seq_length=24, interval="1d", normalize=Fal
         # Add technical indicators
 		data = add_technical_indicators(data)
 		print(f"[INFO] Data shape after indicators: {data.shape}")
+		
+		# Plot technical indicators if requested
+		if plot_indicators:
+			plot_technical_indicators(data, t)
+		
 		print(f"[INFO] Creating sequences with sequence length {seq_length}...")
 		features = data[['Close', 'SMA_14', 'RSI_14', 'MACD']]
 
