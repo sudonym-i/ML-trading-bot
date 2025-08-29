@@ -21,15 +21,19 @@ This project is an automated trading bot that uses deep learning to predict futu
 - **Training:**
     - Model is trained using Mean Squared Error (MSE) loss and Adam optimizer.
     - Training parameters (epochs, batch size, learning rate, etc.) are set in `train_nn.json`.
+      
+<img width="1568" height="957" alt="Screenshot from 2025-08-24 11-21-57" src="https://github.com/user-attachments/assets/3666287c-01ed-4a8e-8cff-57b91a18edaf" />
 
 - **Trading Logic:**
     - For each time step, the model predicts the next price.
     - **Buy** if prediction > current price (or hold if already holding)
     - **Sell** if prediction < current price
     - The bot currently trades the entire portfolio (all-in/all-out, no position sizing)
+ 
+      
+<img width="1568" height="957" alt="Screenshot from 2025-08-24 11-22-07" src="https://github.com/user-attachments/assets/2262b8d4-06da-4af4-908a-e3e02c3cacbc" />
 
 ## Configuration
-
 Edit `src/config.json` to set:
 
 - `tickers`: List of stock symbols
@@ -37,6 +41,9 @@ Edit `src/config.json` to set:
 - `seq_length`: Number of time steps in each input sequence
 - `interval`: Data frequency (e.g., '1d')
 - `epochs`, `batch_size`, `lr`: Training hyperparameters
+
+  <img width="1570" height="912" alt="Screenshot from 2025-08-24 11-22-25" src="https://github.com/user-attachments/assets/b2c8bfa6-9825-4883-b035-0d69cabedc6f" />
+
 
 ## Limitations
 
