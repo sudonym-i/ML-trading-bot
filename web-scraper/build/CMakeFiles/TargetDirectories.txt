@@ -1,3 +1,0 @@
-/home/isaac/gitclones/web-scraper/build/CMakeFiles/webscrape.exe.dir
-/home/isaac/gitclones/web-scraper/build/CMakeFiles/edit_cache.dir
-/home/isaac/gitclones/web-scraper/build/CMakeFiles/rebuild_cache.dir

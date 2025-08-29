@@ -1,8 +1,8 @@
-from nn import train_model, test_model
+import tsr_model
 
 def main():
 
-    model = train_model()
-    test_model(model)
+    model = tsr_model.train_model()
+    tsr_model.test_model(model)
     
 main()
