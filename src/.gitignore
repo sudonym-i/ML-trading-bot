@@ -37,6 +37,7 @@ Thumbs.db
 
 # VS Code settings
 .vscode/
+.claude
 
 # Config and secrets
 config.json

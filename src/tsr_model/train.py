@@ -1,7 +1,7 @@
 import torch
 from torch.utils.data import DataLoader as TorchDataLoader, TensorDataset
 from .model import GRUPredictor
-from .data_handler import DataLoader
+from .data_pipeline import DataLoader
 from .utils import create_sequences, add_technical_indicators
 from .visualizations import plot_training_loss
 import numpy as np

@@ -1,7 +1,7 @@
 import json
 import os
 from .model import GRUPredictor
-from .data_handler import make_dataset
+from .data_pipeline import make_dataset
 from .train import train_gru_predictor
 from .trade import simulate_trading
 
@@ -14,8 +14,8 @@ def train_model():
         model: Trained GRUPredictor model
     """
     # Get the path to the master config file relative to this module
-    # Current file is in src/tsr_model/, config is in src/
-    config_path = os.path.join(os.path.dirname(os.path.dirname(__file__)), "config.json")
+    # Current file is in src/tsr_model/, config is in root/
+    config_path = os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(__file__))), "config.json")
     
     try:
         with open(config_path, "r") as fil:
@@ -62,8 +62,8 @@ def test_model(model):
         model: Trained GRUPredictor model to test
     """
     # Get the path to the master config file relative to this module
-    # Current file is in src/tsr_model/, config is in src/
-    config_path = os.path.join(os.path.dirname(os.path.dirname(__file__)), "config.json")
+    # Current file is in src/tsr_model/, config is in root/
+    config_path = os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(__file__))), "config.json")
     
     try:
         with open(config_path, "r") as fil:

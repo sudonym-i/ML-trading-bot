@@ -20,6 +20,7 @@
 #include <vector>      // For std::vector containers
 #include <stdexcept>   // For exception handling
 #include "scraper.h"   // Custom header for DataList class and scraping functionality
+#include <fmt/format.h>  // For fmt::format library
 
 /**
  * @brief File path to the JSON configuration file containing scraping instructions
@@ -242,11 +243,19 @@ ChainConfig parse_crawlchain() {
     ScrapeConfig scrapeConfig;
     scrapeConfig.start_tag = extractJsonValue(chainObject, "start_tag");
     scrapeConfig.end_tag = extractJsonValue(chainObject, "end_tag");
-    scrapeConfig.url = extractJsonValue(chainObject, "url");
+    
+    // Extract stock_name and construct the URL dynamically
+    std::string stock_name = extractJsonValue(chainObject, "stock_name");
+    if (stock_name.empty()) {
+        throw std::runtime_error("Missing required field 'stock_name' in chain configuration");
+    }
+    
+    // Construct the URL using fmt::format with the stock name
+    scrapeConfig.url = fmt::format("https://filmot.com/search/{}%20stock/1?gridView=1", stock_name);
     
     // Validate that all required fields are present
     if (scrapeConfig.start_tag.empty() || scrapeConfig.end_tag.empty() || scrapeConfig.url.empty()) {
-        throw std::runtime_error("Missing required fields (start_tag, end_tag, or url) in chain configuration");
+        throw std::runtime_error("Missing required fields (start_tag, end_tag, or stock_name) in chain configuration");
     }
     
     // Add the parsed configuration to the chains vector

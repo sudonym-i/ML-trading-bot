@@ -40,8 +40,40 @@ add_executable(webscrape.exe main.cpp scraper.cpp)
 # REQUIRED flag ensures build fails if libCurl is not found
 # libCurl provides HTTP/HTTPS client functionality for web scraping
 find_package(CURL REQUIRED)
+find_package(fmt REQUIRED)
 
 # Link the libCurl library to the executable
 # Uses modern CMake target-based linking for proper include paths and library flags
 # CURL::libcurl is the imported target provided by FindCURL module
-target_link_libraries(webscrape.exe CURL::libcurl)
+target_link_libraries(webscrape.exe CURL::libcurl fmt::fmt)
+
+# ============================================================================
+# Google Test Configuration for Unit Testing
+# ============================================================================
+
+# Include CTest for running tests
+include(CTest)
+enable_testing()
+
+# Only build tests if this is the main project (not included as subdirectory)
+if(CMAKE_PROJECT_NAME STREQUAL PROJECT_NAME)
+    # Fetch Google Test from GitHub
+    include(FetchContent)
+    FetchContent_Declare(
+        googletest
+        GIT_REPOSITORY https://github.com/google/googletest.git
+        GIT_TAG        v1.14.0  # Use latest stable version
+    )
+    
+    # Configure Google Test
+    set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
+    FetchContent_MakeAvailable(googletest)
+    
+    # Create a library from scraper sources (for testing)
+    # This allows tests to link against scraper functionality without duplicating code
+    add_library(scraper_lib scraper.cpp)
+    target_link_libraries(scraper_lib CURL::libcurl fmt::fmt)
+    
+    # Add the tests subdirectory
+    add_subdirectory(../../../tests ${CMAKE_CURRENT_BINARY_DIR}/tests)
+endif()
