@@ -31,7 +31,7 @@
  * 
  * The file uses JSON format for structured configuration data.
  */
-const std::string CHAIN_PATH = "../chain.json";
+const std::string CHAIN_PATH = "../../../config.json";
 
 /**
  * @brief Complete configuration parsed from JSON file
@@ -190,24 +190,45 @@ ChainConfig parse_crawlchain() {
 
     ChainConfig config;
     
-    // Extract global configuration: output filename
-    config.output_name = extractJsonValue(jsonContent, "output_name");
+    // Navigate to the sentiment_model.web_scraper section
+    size_t sentimentPos = jsonContent.find("\"sentiment_model\"");
+    if (sentimentPos == std::string::npos) {
+        throw std::runtime_error("No 'sentiment_model' section found in JSON configuration");
+    }
+    
+    size_t webScraperPos = jsonContent.find("\"web_scraper\"", sentimentPos);
+    if (webScraperPos == std::string::npos) {
+        throw std::runtime_error("No 'web_scraper' section found in sentiment_model configuration");
+    }
+    
+    // Find the web_scraper object boundaries
+    size_t webScraperStart = jsonContent.find("{", webScraperPos);
+    size_t webScraperEnd = jsonContent.find("}\n  }", webScraperStart);
+    
+    if (webScraperStart == std::string::npos || webScraperEnd == std::string::npos) {
+        throw std::runtime_error("Invalid JSON structure in web_scraper section");
+    }
+    
+    std::string webScraperSection = jsonContent.substr(webScraperStart, webScraperEnd - webScraperStart + 1);
+    
+    // Extract output filename from the web_scraper section
+    config.output_name = extractJsonValue(webScraperSection, "output_name");
     if (config.output_name.empty()) {
-        throw std::runtime_error("Missing or empty 'output_name' in configuration file");
+        throw std::runtime_error("Missing or empty 'output_name' in web_scraper configuration");
     }
 
-    // Locate the chains array in the JSON structure
-    size_t chainsPos = jsonContent.find("\"chains\"");
+    // Locate the chains array in the web_scraper section
+    size_t chainsPos = webScraperSection.find("\"chains\"");
     if (chainsPos == std::string::npos) {
-        throw std::runtime_error("No 'chains' array found in JSON configuration");
+        throw std::runtime_error("No 'chains' array found in web_scraper configuration");
     }
 
     // Parse the first (and currently only supported) chain entry
     // Find the array opening bracket
-    size_t arrayStart = jsonContent.find("[", chainsPos);
+    size_t arrayStart = webScraperSection.find("[", chainsPos);
     // Find the first object in the array
-    size_t objectStart = jsonContent.find("{", arrayStart);
-    size_t objectEnd = jsonContent.find("}", objectStart);
+    size_t objectStart = webScraperSection.find("{", arrayStart);
+    size_t objectEnd = webScraperSection.find("}", objectStart);
     
     // Validate JSON structure
     if (objectStart == std::string::npos || objectEnd == std::string::npos) {
@@ -215,7 +236,7 @@ ChainConfig parse_crawlchain() {
     }
 
     // Extract the individual chain object for detailed parsing
-    std::string chainObject = jsonContent.substr(objectStart, objectEnd - objectStart + 1);
+    std::string chainObject = webScraperSection.substr(objectStart, objectEnd - objectStart + 1);
     
     // Extract individual chain configuration values
     ScrapeConfig scrapeConfig;
