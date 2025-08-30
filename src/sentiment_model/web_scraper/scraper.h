@@ -103,6 +103,25 @@ public:
      */
     void write(std::ostream& out);
 
+    /**
+     * @brief libCurl callback function for receiving HTTP response data
+     * 
+     * Static callback function used by libCurl to handle incoming HTTP data.
+     * Appends received data to the provided string buffer. Must be static
+     * to comply with libCurl callback function signature requirements.
+     * 
+     * @param contents Pointer to received data buffer
+     * @param size Size of each data element
+     * @param nmemb Number of data elements
+     * @param output Pointer to std::string where data should be appended
+     * @return size_t Number of bytes processed (size * nmemb for success)
+     * 
+     * @note Required for libCurl integration - do not modify signature
+     * @note Returns the number of bytes processed for libCurl status tracking
+     * @note Made public for testing purposes
+     */
+    static size_t WriteCallback(void* contents, size_t size, size_t nmemb, std::string* output);
+
 private:
     /**
      * @struct Node
@@ -145,23 +164,6 @@ private:
      */
     bool findTag(const std::string& html_content, size_t& pos, const std::string& target);
 
-    /**
-     * @brief libCurl callback function for receiving HTTP response data
-     * 
-     * Static callback function used by libCurl to handle incoming HTTP data.
-     * Appends received data to the provided string buffer. Must be static
-     * to comply with libCurl callback function signature requirements.
-     * 
-     * @param contents Pointer to received data buffer
-     * @param size Size of each data element
-     * @param nmemb Number of data elements
-     * @param output Pointer to std::string where data should be appended
-     * @return size_t Number of bytes processed (size * nmemb for success)
-     * 
-     * @note Required for libCurl integration - do not modify signature
-     * @note Returns the number of bytes processed for libCurl status tracking
-     */
-    static size_t WriteCallback(void* contents, size_t size, size_t nmemb, std::string* output);
 
     /**
      * @brief Performs HTTP request and content extraction for a single URL

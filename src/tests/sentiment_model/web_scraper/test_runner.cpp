@@ -79,7 +79,7 @@ int main(int argc, char** argv) {
     
     // Print test configuration
     std::cout << "\n=== Web Scraper Test Suite ===" << std::endl;
-    std::cout << "Google Test Version: " << GTEST_VERSION << std::endl;
+    std::cout << "Google Test Version: " << "1.14.0" << std::endl;
     std::cout << "Test executable: " << argv[0] << std::endl;
     
     if (argc > 1) {

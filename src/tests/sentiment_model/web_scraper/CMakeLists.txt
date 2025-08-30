@@ -29,7 +29,7 @@ target_link_libraries(
 target_include_directories(
     scraper_tests 
     PRIVATE 
-    ${CMAKE_SOURCE_DIR}/sentiment_model/web_scraper
+    ${CMAKE_SOURCE_DIR}
 )
 
 # Register tests with CTest

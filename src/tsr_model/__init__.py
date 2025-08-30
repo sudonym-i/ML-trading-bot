@@ -1,4 +1,4 @@
 # src package init
-from .route import train_model, test_model
+from .route import train_model, test_run_model
 
-# just need to ass "use_model" functionality
+# just need to add "use_model" functionality

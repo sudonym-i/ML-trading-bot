@@ -54,7 +54,7 @@ def train_model():
 
 
 
-def test_model(model):
+def test_run_model(model):
     """
     Tests the GRU predictor model using configuration from the master config file.
     
